@@ -5,6 +5,7 @@ public class IdentifierToken extends Token {
 
     /**
      * Checks if ch is a valid Identifier Token
+     *
      * @param str string to check if it is an Identifier token
      * @return true if ch is an Identifier Token, false otherwise
      */

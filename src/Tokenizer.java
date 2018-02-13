@@ -55,7 +55,7 @@ public class Tokenizer {
             }
             else if (LiteralToken.isToken(buf)) {
                 // The last check for a number token handles the case when a '.' is a literal token and not part of a number
-                if (isDelim(nextCh) || !LiteralToken.isToken(buf+nextToken) && !isComment(buf+nextToken) || NumberToken.isToken(nextToken)) {
+                if (isDelim(nextCh) || (!LiteralToken.isToken(buf+nextToken) && !isComment(buf+nextToken)) || NumberToken.isToken(nextToken)) {
                     this.cs.getIO().write(new LiteralToken(buf, cs).toString());
                     charBuffer = CharBuffer.allocate(this.bufferCapacity);
                 }
@@ -98,57 +98,16 @@ public class Tokenizer {
     }
 
     /**
-     * Special delimiter cases fro numbers.
+     * Special delimiter cases for numbers.
      *
      * @param str String to check if it deliminates a number
      * @return true if str is a number delimiter, false otherwise
      */
     private boolean isNumDelim(String str) {
-        boolean literalToken;
-
-        // Have to check for a literal token EXCEPT for '.'. If a check using LiteralToken.isToken is used, then numbers
-        // with a '.' in them will be broken into two numbers with a literal token between them.
-        switch (str) {
-            case "(":
-            case ")":
-            case "[":
-            case "]":
-            case "{":
-            case "}":
-            case ",":
-            case ";":
-            case ":":
-            case "::":
-            case "!":
-            case "?":
-            case "=":
-            case "==":
-            case "!=":
-            case "<<":
-            case ">>":
-            case "<":
-            case ">":
-            case "<=":
-            case ">=":
-            case "&":
-            case "&&":
-            case "|":
-            case "||":
-            case "^":
-            case "*":
-            case "%":
-            case "/":
-            case "+":
-            case "-":
-            case "++":
-            case "--":
-                literalToken = true;
-                break;
-            default:
-                literalToken = false;
+        if (str.equals(".")) {
+            return false;
         }
-
-        return literalToken || KeywordToken.isToken(str) || IdentifierToken.isToken(str);
+        return LiteralToken.isToken(str) || KeywordToken.isToken(str) || IdentifierToken.isToken(str);
     }
 
     /**
