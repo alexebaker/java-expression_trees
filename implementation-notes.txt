@@ -1,0 +1,22 @@
+IMPLEMENTATION NOTES FOR SPIKE2
+
+ERROR MESSAGES
+
+ - The spike2 spec does not determine what error messages should look
+   like, other than requiring that they be sent to stderr rather than
+   stdout.
+
+ - However, since our spike1 includes such lovely abilities to
+   identify exact positions in input files, implementors are
+   encourages to make use of that in their error messages.
+
+ - For example, here are some possible error messages that could be
+   generated while spike2 parsing the e10.expi file:
+
+    e10.expi:1:2: Expected ';' but found '#'
+    e10.expi:3:16: Expected ';' but found '!'
+    e10.expi:5:1: Expected primary expression but found '''
+    e10.expi:5:9: Expected ':' but found '_'
+    e10.expi:9:5: Expected ';' but found 'eeekekekekekekekekekeke'
+
+
