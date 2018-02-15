@@ -1,12 +1,14 @@
+package Tokenizer;
+
 public class IllChrToken extends Token {
-    IllChrToken(String value, CompilerState cs) {
+    IllChrToken(String value, Compiler.CompilerState cs) {
         super("$illchr", value, cs);
     }
 
     /**
-     * Checks if ch is a valid Illegal Character Token
+     * Checks if ch is a valid Illegal Character TokenReader.Token
      * @param str string to check if it is an Illegal Character token
-     * @return true if str is an Illegal Character Token, false otherwise
+     * @return true if str is an Illegal Character TokenReader.Token, false otherwise
      */
     public static boolean isToken(String str) {
         return !LiteralToken.isToken(str) && !KeywordToken.isToken(str) && !IdentifierToken.isToken(str) && !NumberToken.isToken(str);

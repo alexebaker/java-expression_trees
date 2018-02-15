@@ -1,36 +1,37 @@
+package Compiler;
+
 import java.io.*;
 
 /**
- * @author Alexander Baker
- *
- * CS 554
- * Lexical Analysis
+ * Handles all IO for the compiler
  */
-
 public class CompilerIO {
     private BufferedReader in;
     private BufferedWriter out;
 
-    CompilerIO() {
+    private long lineCount = 1;
+    private long charCount = 0;
+
+    public CompilerIO() {
         this(System.in, System.out);
     }
 
-    CompilerIO(InputStream in, OutputStream out) {
+    public CompilerIO(InputStream in, OutputStream out) {
        this.in = new BufferedReader(new InputStreamReader(in));
        this.out = new BufferedWriter(new OutputStreamWriter(out));
     }
 
-    CompilerIO(FileReader in, FileWriter out) {
+    public CompilerIO(FileReader in, FileWriter out) {
        this.in = new BufferedReader(in);
        this.out = new BufferedWriter(out);
     }
 
-    CompilerIO(InputStream in, FileWriter out) {
+    public CompilerIO(InputStream in, FileWriter out) {
        this.in = new BufferedReader(new InputStreamReader(in));
        this.out = new BufferedWriter(out);
     }
 
-    CompilerIO(FileReader in, OutputStream out) {
+    public CompilerIO(FileReader in, OutputStream out) {
        this.in = new BufferedReader(in);
        this.out = new BufferedWriter(new OutputStreamWriter(out));
     }
@@ -48,8 +49,15 @@ public class CompilerIO {
         }
         catch (IOException ex) {
             System.err.println("Failed to read from input stream:");
-            System.err.println(ex);
+            ex.printStackTrace();
+            close();
             System.exit(1);
+        }
+
+        this.charCount += 1;
+        if (ch == '\n') {
+            this.lineCount += 1;
+            this.charCount = 0;
         }
         return ch;
     }
@@ -76,14 +84,15 @@ public class CompilerIO {
             this.in.mark(readAheadLimit);
 
             for (int i = 0; i < readAheadLimit; i++) {
-                ch = read();
+                ch = this.in.read();
             }
 
             this.in.reset();
         }
         catch (IOException ex) {
             System.err.println("Failed to read ahead " + readAheadLimit + "from input stream:");
-            System.err.println(ex);
+            ex.printStackTrace();
+            close();
             System.exit(1);
         }
         return ch;
@@ -129,9 +138,28 @@ public class CompilerIO {
         }
         catch (IOException ex) {
             System.err.println("Failed to write \"" + str + "\" to the output stream.");
-            System.err.println(ex);
+            ex.printStackTrace();
+            close();
             System.exit(1);
         }
+    }
+
+    /**
+     * Gets the current line number in the file being compiled
+     *
+     * @return Current line number
+     */
+    public long getLineCount() {
+        return this.lineCount;
+    }
+
+    /**
+     * Get the current char count for the given line
+     *
+     * @return The current char count
+     */
+    public long getCharCount() {
+        return this.charCount;
     }
 
     /**
@@ -144,7 +172,7 @@ public class CompilerIO {
         }
         catch (IOException ex) {
             System.err.println("Failed to close the input or output stream.");
-            System.err.println(ex);
+            ex.printStackTrace();
             System.exit(1);
         }
     }

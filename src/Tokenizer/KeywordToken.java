@@ -1,12 +1,14 @@
+package Tokenizer;
+
 public class KeywordToken extends Token {
-    KeywordToken(String token, CompilerState cs) {
+    KeywordToken(String token, Compiler.CompilerState cs) {
         super(token, cs);
     }
 
     /**
-     * Checks if ch is a valid Keyword Token
+     * Checks if ch is a valid Keyword TokenReader.Token
      * @param str string to check if it is an Keyword token
-     * @return true if ch is an Keyword Token, false otherwise
+     * @return true if ch is an Keyword TokenReader.Token, false otherwise
      */
     public static boolean isToken(String str) {
         switch (str) {

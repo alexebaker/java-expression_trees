@@ -1,10 +1,6 @@
 /**
- * @author Alexander Baker
- *
- * CS 554
- * Lexical Analysis
+ * Main class called to compile the input
  */
-
 public class Main {
     public static void main(String[] argv) {
         if (argv.length > 1) {
@@ -13,14 +9,11 @@ public class Main {
         }
 
         System.setProperty("line.separator", "\n");
-        CompilerState cs = new CompilerState();
+        Compiler.CompilerState cs = new Compiler.CompilerState();
 
         if (argv.length == 1) {
-            cs = new CompilerState(argv[0]);
+            cs = new Compiler.CompilerState(argv[0]);
         }
-
-        Tokenizer tokenizer = new Tokenizer(cs);
-        tokenizer.tokenize();
 
         cs.getIO().close();
         System.exit(0);

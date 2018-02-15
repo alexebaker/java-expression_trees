@@ -1,11 +1,13 @@
+package Tokenizer;
+
 import java.nio.BufferOverflowException;
 import java.nio.CharBuffer;
 
-public class Tokenizer {
-    CompilerState cs;
-    int bufferCapacity = 1024;
+public class TokenReader {
+    private Compiler.CompilerState cs;
+    private int bufferCapacity = 1024;
 
-    public Tokenizer(CompilerState cs) {
+    public TokenReader(Compiler.CompilerState cs) {
         this.cs = cs;
     }
 
@@ -13,18 +15,17 @@ public class Tokenizer {
      * Tokenizes the input based on what is read from the compiler state
      * and prints the tokens to the output from compiler state.
      */
-    public void tokenize() {
+    public Token getNextToken() {
         int ch;
         boolean inComment = false;
         CharBuffer charBuffer = CharBuffer.allocate(this.bufferCapacity);
 
         while (true) {
-            ch = this.cs.read();
+            ch = this.cs.getIO().read();
 
             // First, determine special cases that to not need to be tokenized
             if (EOFToken.isToken(ch)) {
-                this.cs.getIO().write(new EOFToken(this.cs).toString());
-                break;
+                return new EOFToken(this.cs);
             }
             else if (ch == '\n') {
                 inComment = false;
@@ -38,8 +39,9 @@ public class Tokenizer {
                 charBuffer.append((char) ch);
             }
             catch (BufferOverflowException ex) {
-                System.err.println("Token exceeded " + this.bufferCapacity + " bytes.");
-                System.err.println(ex);
+                System.err.println("TokenReader.Token exceeded " + this.bufferCapacity + " bytes.");
+                ex.printStackTrace();
+                this.cs.getIO().close();
                 System.exit(1);
             }
 
@@ -56,33 +58,28 @@ public class Tokenizer {
             else if (LiteralToken.isToken(buf)) {
                 // The last check for a number token handles the case when a '.' is a literal token and not part of a number
                 if (isDelim(nextCh) || (!LiteralToken.isToken(buf+nextToken) && !isComment(buf+nextToken)) || NumberToken.isToken(nextToken)) {
-                    this.cs.getIO().write(new LiteralToken(buf, cs).toString());
-                    charBuffer = CharBuffer.allocate(this.bufferCapacity);
+                    return new LiteralToken(buf, cs);
                 }
             }
             else if (KeywordToken.isToken(buf)) {
                 if (isDelim(nextCh) || LiteralToken.isToken(nextToken)) {
-                    this.cs.getIO().write(new KeywordToken(buf, cs).toString());
-                    charBuffer = CharBuffer.allocate(this.bufferCapacity);
+                    return new KeywordToken(buf, cs);
                 }
             }
             else if (IdentifierToken.isToken(buf)) {
                 if (isDelim(nextCh) || LiteralToken.isToken(nextToken)) {
-                    this.cs.getIO().write(new IdentifierToken(buf, cs).toString());
-                    charBuffer = CharBuffer.allocate(this.bufferCapacity);
+                    return new IdentifierToken(buf, cs);
                 }
             }
             else if (NumberToken.isToken(buf)) {
                 // The last check catches numbers which would have more than one '.' in it. If the next token is a '.',
                 // Then is will print out this number and treat the next '.' as a literal token
                 if (isDelim(nextCh) || isNumDelim(nextToken) || !NumberToken.isToken(buf+nextToken)) {
-                    this.cs.getIO().write(new NumberToken(buf, cs).toString());
-                    charBuffer = CharBuffer.allocate(this.bufferCapacity);
+                    return new NumberToken(buf, cs);
                 }
             }
             else {
-                this.cs.getIO().write(new IllChrToken(buf, cs).toString());
-                charBuffer = CharBuffer.allocate(this.bufferCapacity);
+                return new IllChrToken(buf, cs);
             }
         }
     }
@@ -104,10 +101,7 @@ public class Tokenizer {
      * @return true if str is a number delimiter, false otherwise
      */
     private boolean isNumDelim(String str) {
-        if (str.equals(".")) {
-            return false;
-        }
-        return LiteralToken.isToken(str) || KeywordToken.isToken(str) || IdentifierToken.isToken(str);
+        return !str.equals(".") || LiteralToken.isToken(str) || KeywordToken.isToken(str) || IdentifierToken.isToken(str);
     }
 
     /**
