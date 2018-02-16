@@ -1,3 +1,6 @@
+import Compiler.LCC;
+import Compiler.CompilerState;
+
 /**
  * Main class called to compile the input
  */
@@ -9,11 +12,14 @@ public class Main {
         }
 
         System.setProperty("line.separator", "\n");
-        Compiler.CompilerState cs = new Compiler.CompilerState();
+        CompilerState cs = new CompilerState();
 
         if (argv.length == 1) {
-            cs = new Compiler.CompilerState(argv[0]);
+            cs = new CompilerState(argv[0]);
         }
+
+        LCC lcc = new LCC(cs);
+        lcc.compile();
 
         cs.getIO().close();
         System.exit(0);

@@ -5,27 +5,45 @@ import java.nio.CharBuffer;
 
 public class TokenReader {
     private Compiler.CompilerState cs;
+    private boolean hasBufferedToken;
+    private Token bufferedToken;
     private int bufferCapacity = 1024;
 
     public TokenReader(Compiler.CompilerState cs) {
         this.cs = cs;
+        this.hasBufferedToken = false;
+        this.bufferedToken = null;
+    }
+
+    public Token read() {
+        if (hasBufferedToken) {
+            hasBufferedToken = false;
+            return bufferedToken;
+        }
+        return getNextToken();
+    }
+
+    public Token peek() {
+        bufferedToken = getNextToken();
+        hasBufferedToken = true;
+        return bufferedToken;
     }
 
     /**
-     * Tokenizes the input based on what is read from the compiler state
-     * and prints the tokens to the output from compiler state.
+     * Gets the next token from the input based on what is read from the compiler state
+     * and returns the token.
      */
-    public Token getNextToken() {
+    private Token getNextToken() {
         int ch;
         boolean inComment = false;
-        CharBuffer charBuffer = CharBuffer.allocate(this.bufferCapacity);
+        CharBuffer charBuffer = CharBuffer.allocate(bufferCapacity);
 
         while (true) {
-            ch = this.cs.getIO().read();
+            ch = cs.getIO().read();
 
             // First, determine special cases that to not need to be tokenized
             if (EOFToken.isToken(ch)) {
-                return new EOFToken(this.cs);
+                return new EOFToken(cs);
             }
             else if (ch == '\n') {
                 inComment = false;
@@ -39,21 +57,21 @@ public class TokenReader {
                 charBuffer.append((char) ch);
             }
             catch (BufferOverflowException ex) {
-                System.err.println("TokenReader.Token exceeded " + this.bufferCapacity + " bytes.");
+                System.err.println("Token exceeded " + bufferCapacity + " bytes.");
                 ex.printStackTrace();
-                this.cs.getIO().close();
+                cs.getIO().close();
                 System.exit(1);
             }
 
             String buf = new String(charBuffer.array()).trim();
-            int nextCh = this.cs.getIO().peek();
+            int nextCh = cs.getIO().peek();
             String nextToken = Character.toString((char) nextCh);
 
             // Determine if the token in valid. The inside if statements determines
             // if the token needs to be written to the output stream
             if (isComment(buf)) {
                 inComment = true;
-                charBuffer = CharBuffer.allocate(this.bufferCapacity);
+                charBuffer = CharBuffer.allocate(bufferCapacity);
             }
             else if (LiteralToken.isToken(buf)) {
                 // The last check for a number token handles the case when a '.' is a literal token and not part of a number
