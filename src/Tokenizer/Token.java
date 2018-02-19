@@ -1,5 +1,7 @@
 package Tokenizer;
 
+import Compiler.CompilerState;
+
 /**
  * Base Token class for the compiler
  */
@@ -10,11 +12,11 @@ public class Token {
     private long lineCount;
     private long charCount;
 
-    Token(String token, Compiler.CompilerState cs) {
+    Token(String token, CompilerState cs) {
         this(token, "", cs);
     }
 
-    Token(String token, String value, Compiler.CompilerState cs) {
+    Token(String token, String value, CompilerState cs) {
         this.token = token;
         this.value = value;
         this.location = cs.getInputPath();
@@ -30,6 +32,25 @@ public class Token {
         else if (!token.equals("$EOF")) {
             this.charCount = this.charCount - token.length() + 1;
         }
+    }
+
+    public String getValue() {
+        if (value.length() > 0) {
+            return value;
+        }
+        return token;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public long getCharCount() {
+        return charCount;
+    }
+
+    public long getLineCount() {
+        return lineCount;
     }
 
     @Override

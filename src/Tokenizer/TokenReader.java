@@ -3,13 +3,15 @@ package Tokenizer;
 import java.nio.BufferOverflowException;
 import java.nio.CharBuffer;
 
+import Compiler.CompilerState;
+
 public class TokenReader {
-    private Compiler.CompilerState cs;
+    private CompilerState cs;
     private boolean hasBufferedToken;
     private Token bufferedToken;
     private int bufferCapacity = 1024;
 
-    public TokenReader(Compiler.CompilerState cs) {
+    public TokenReader(CompilerState cs) {
         this.cs = cs;
         this.hasBufferedToken = false;
         this.bufferedToken = null;

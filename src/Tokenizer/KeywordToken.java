@@ -1,14 +1,17 @@
 package Tokenizer;
 
+import Compiler.CompilerState;
+
 public class KeywordToken extends Token {
-    KeywordToken(String token, Compiler.CompilerState cs) {
+    KeywordToken(String token, CompilerState cs) {
         super(token, cs);
     }
 
     /**
-     * Checks if ch is a valid Keyword TokenReader.Token
-     * @param str string to check if it is an Keyword token
-     * @return true if ch is an Keyword TokenReader.Token, false otherwise
+     * Checks if ch is a valid Keyword Token
+     *
+     * @param str string to check if it is an Keyword Token
+     * @return true if ch is an Keyword Token, false otherwise
      */
     public static boolean isToken(String str) {
         switch (str) {
@@ -36,5 +39,15 @@ public class KeywordToken extends Token {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Checks if token is a valid Keyword Token
+     *
+     * @param token token to check if it is a Keyword Token
+     * @return true if token is a Keyword Token, false otherwise
+     */
+    public static boolean isToken(Token token) {
+        return token instanceof KeywordToken && KeywordToken.isToken(token.getValue());
     }
 }

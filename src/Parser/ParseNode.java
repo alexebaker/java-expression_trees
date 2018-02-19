@@ -8,8 +8,13 @@ public class ParseNode {
     private Token token;
     private Vector<ParseNode> children;
 
+    public ParseNode() {
+        this(null);
+    }
+
     public ParseNode(Token token) {
         this.token = token;
+        this.children = new Vector<>();
     }
 
     public void addChild(ParseNode child) {
@@ -27,7 +32,11 @@ public class ParseNode {
         for(ParseNode child : getChildren()) {
             str.append(child.toString());
         }
-        str.append(token.toString());
+
+        if (token != null) {
+            str.append(token.toString());
+        }
+
         str.append(")");
         return str.toString();
     }
