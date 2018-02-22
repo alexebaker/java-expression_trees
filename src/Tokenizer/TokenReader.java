@@ -4,7 +4,6 @@ import java.nio.BufferOverflowException;
 import java.nio.CharBuffer;
 
 import Compiler.CompilerState;
-import Compiler.CompilerIO;
 
 public class TokenReader {
     private CompilerState cs;
@@ -14,13 +13,13 @@ public class TokenReader {
 
     public TokenReader(CompilerState cs) {
         this.cs = cs;
-        this.hasBufferedToken = false;
         this.bufferedToken = null;
+        this.hasBufferedToken = false;
     }
 
     public Token read() {
         if (hasBufferedToken) {
-            hasBufferedToken = !hasBufferedToken;
+            hasBufferedToken = false;
             return bufferedToken;
         }
         return getNextToken();
@@ -29,7 +28,7 @@ public class TokenReader {
     public Token peek() {
         if (!hasBufferedToken) {
             bufferedToken = getNextToken();
-            hasBufferedToken = !hasBufferedToken;
+            hasBufferedToken = true;
         }
         return bufferedToken;
     }
@@ -40,6 +39,7 @@ public class TokenReader {
      */
     private Token getNextToken() {
         int ch;
+        boolean inComment = false;
         CharBuffer charBuffer = CharBuffer.allocate(bufferCapacity);
 
         while (true) {
@@ -49,7 +49,11 @@ public class TokenReader {
             if (EOFToken.isToken(ch)) {
                 return new EOFToken(cs);
             }
-            else if (Character.isWhitespace(ch)) {
+            else if (ch == '\n') {
+                inComment = false;
+                continue;
+            }
+            else if (Character.isWhitespace(ch) || inComment) {
                 continue;
             }
 
@@ -70,6 +74,8 @@ public class TokenReader {
             // Determine if the token in valid. The inside if statements determines
             // if the token needs to be written to the output stream
             if (isComment(buf)) {
+                inComment = true;
+                charBuffer = CharBuffer.allocate(bufferCapacity);
             }
             else if (LiteralToken.isToken(buf)) {
                 // The last check for a number token handles the case when a '.' is a literal token and not part of a number
@@ -111,17 +117,6 @@ public class TokenReader {
         }
     }
 
-    private void handleComment(CompilerIO io) {
-        while (true) {
-            if (io.peek() == -1) {
-                return;
-            }
-            else if (io.read() == '\n') {
-                return;
-            }
-        }
-    }
-
     /**
      * Basic delimiter check for all tokens
      *
@@ -139,7 +134,10 @@ public class TokenReader {
      * @return true if str is a number delimiter, false otherwise
      */
     private boolean isNumDelim(String str) {
-        return !str.equals(".") || LiteralToken.isToken(str) || KeywordToken.isToken(str) || IdentifierToken.isToken(str);
+        if (str.equals(".")) {
+            return false;
+        }
+        return LiteralToken.isToken(str) || KeywordToken.isToken(str) || IdentifierToken.isToken(str);
     }
 
     /**

@@ -1,6 +1,7 @@
 package Parser.Nodes;
 
 import Parser.Operators.EqOp;
+import Parser.Operators.Operator;
 import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
@@ -40,23 +41,21 @@ public class EqExprNode extends ParseNode {
         return str.toString();
     }
 
-    public static EqExprNode parse(TokenReader tr) {
-        RelExprNode relExprNode = RelExprNode.parse(tr);
-        if (relExprNode != null) {
-            Token token;
-            EqExprNode eqExprNode = new EqExprNode();
-            eqExprNode.setRelExprNode(relExprNode);
-            token = tr.peek();
-            if (EqOp.isOp(token)) {
-                eqExprNode.setEqOp(new EqOp(tr.read()));
-                EqExprNode eqExprNode1 = EqExprNode.parse(tr);
-                if (eqExprNode1 != null) {
-                    eqExprNode.setEqExprNode(eqExprNode1);
-                    return eqExprNode;
+    public static ParseNode parse(TokenReader tr) {
+        ParseNode node = RelExprNode.parse(tr);
+        if (node != null) {
+            while (EqOp.isOp(tr.peek())) {
+                Operator temp = new EqOp(tr.read());
+                temp.setLhs(node);
+                ParseNode node1 = RelExprNode.parse(tr);
+                if (node1 != null) {
+                    temp.setRhs(node1);
+                    node = temp;
+                    continue;
                 }
                 return null;
             }
-            return eqExprNode;
+            return node;
         }
         return null;
     }

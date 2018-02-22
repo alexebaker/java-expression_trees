@@ -1,7 +1,7 @@
 package Parser.Nodes;
 
+import Parser.Operators.Operator;
 import Parser.Operators.RelOp;
-import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
 public class RelExprNode extends ParseNode {
@@ -40,23 +40,21 @@ public class RelExprNode extends ParseNode {
         return str.toString();
     }
 
-    public static RelExprNode parse(TokenReader tr) {
-        SimpleExprNode simpleExprNode = SimpleExprNode.parse(tr);
-        if (simpleExprNode != null) {
-            Token token;
-            RelExprNode relExprNode = new RelExprNode();
-            relExprNode.setSimpleExprNode(simpleExprNode);
-            token = tr.peek();
-            if (RelOp.isOp(token)) {
-                relExprNode.setRelOp(new RelOp(tr.read()));
-                RelExprNode relExprNode1 = RelExprNode.parse(tr);
-                if (relExprNode1 != null) {
-                    relExprNode.setRelExprNode(relExprNode1);
-                    return relExprNode;
+    public static ParseNode parse(TokenReader tr) {
+        ParseNode node = SimpleExprNode.parse(tr);
+        if (node != null) {
+            while (RelOp.isOp(tr.peek())) {
+                Operator temp = new RelOp(tr.read());
+                temp.setLhs(node);
+                ParseNode node1 = SimpleExprNode.parse(tr);
+                if (node1 != null) {
+                    temp.setRhs(node1);
+                    node = temp;
+                    continue;
                 }
                 return null;
             }
-            return relExprNode;
+            return node;
         }
         return null;
     }

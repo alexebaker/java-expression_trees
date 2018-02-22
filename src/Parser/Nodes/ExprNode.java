@@ -1,22 +1,22 @@
 package Parser.Nodes;
 
-import Tokenizer.Token;
+import Parser.Operators.Operator;
 import Tokenizer.TokenReader;
 
 import java.util.Vector;
 
 public class ExprNode extends ParseNode {
-    private Vector<AsgnExprNode> asgnExprs;
+    private Vector<ParseNode> asgnExprs;
 
     public ExprNode() {
         this.asgnExprs = new Vector<>();
     }
 
-    public void addAsgnExpr(AsgnExprNode asgnExpr) {
+    public void addAsgnExpr(ParseNode asgnExpr) {
         asgnExprs.add(asgnExpr);
     }
 
-    public Vector<AsgnExprNode> getAsgnExprs() {
+    public Vector<ParseNode> getAsgnExprs() {
         return asgnExprs;
     }
 
@@ -25,24 +25,23 @@ public class ExprNode extends ParseNode {
      *
      * @return true if the parse was successful, false otherwise
      */
-    public static ExprNode parse(TokenReader tr) {
+    public static ParseNode parse(TokenReader tr) {
         //System.out.println("Parsing Expression...");
-        Token token;
-        ExprNode exprNode = new ExprNode();
-
-        while (true) {
-            AsgnExprNode asgnExprNode = AsgnExprNode.parse(tr);
-            if (asgnExprNode != null) {
-                //System.out.println("Good Asgn Expr...");
-                exprNode.addAsgnExpr(asgnExprNode);
-                token = tr.peek();
-                if (token.getValue().equals(",")) {
-                    tr.read();
-                    continue;
+        ParseNode node = AsgnExprNode.parse(tr);
+        if (node != null) {
+            while (tr.peek().getValue().equals(",")) {
+                Operator temp = new Operator(tr.read());
+                temp.setLhs(node);
+                ParseNode node1 = AsgnExprNode.parse(tr);
+                if (node1 != null) {
+                    temp.setRhs(node1);
+                    node = temp;
                 }
-                return exprNode;
+                else {
+                    return null;
+                }
             }
-            break;
+            return node;
         }
         return null;
     }
@@ -50,7 +49,7 @@ public class ExprNode extends ParseNode {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder("");
-        for (AsgnExprNode asgnExpr : getAsgnExprs()) {
+        for (ParseNode asgnExpr : getAsgnExprs()) {
             str.append(asgnExpr.toString());
         }
         return str.toString();

@@ -4,13 +4,13 @@ import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
 public class OptArraySizeNode extends ParseNode {
-    private ExprNode exprNode;
+    private ParseNode exprNode;
 
     public OptArraySizeNode() {
         this.exprNode = null;
     }
 
-    public void setExprNode(ExprNode exprNode) {
+    public void setExprNode(ParseNode exprNode) {
         this.exprNode = exprNode;
     }
 
@@ -23,14 +23,14 @@ public class OptArraySizeNode extends ParseNode {
         return str.toString();
     }
 
-    public static OptArraySizeNode parse(TokenReader tr) {
+    public static ParseNode parse(TokenReader tr) {
         Token token = tr.peek();
         OptArraySizeNode optArraySizeNode = new OptArraySizeNode();
         if (token.getValue().equals("]")) {
             return optArraySizeNode;
         }
 
-        ExprNode exprNode = ExprNode.parse(tr);
+        ParseNode exprNode = ExprNode.parse(tr);
         if (exprNode != null) {
             optArraySizeNode.setExprNode(exprNode);
             return optArraySizeNode;

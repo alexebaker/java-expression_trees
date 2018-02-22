@@ -1,14 +1,16 @@
 package Parser.Nodes;
 
+import Parser.Operators.Operator;
 import Parser.Operators.PostunOp;
 import Tokenizer.Token;
 import Tokenizer.TokenReader;
+import javafx.geometry.Pos;
 
 public class PostfixExprNode extends ParseNode {
-    private PrimaryExprNode primaryExprNode;
-    private PostfixExprNode postfixExprNode;
-    private PostunOp postunOp;
-    private ArraySpecNode arraySpecNode;
+    private ParseNode primaryExprNode;
+    private ParseNode postfixExprNode;
+    private Operator postunOp;
+    private ParseNode arraySpecNode;
 
     public PostfixExprNode() {
         this.primaryExprNode = null;
@@ -17,19 +19,19 @@ public class PostfixExprNode extends ParseNode {
         this.arraySpecNode = null;
     }
 
-    public void setPostfixExprNode(PostfixExprNode postfixExprNode) {
+    public void setPostfixExprNode(ParseNode postfixExprNode) {
         this.postfixExprNode = postfixExprNode;
     }
 
-    public void setArraySpecNode(ArraySpecNode arraySpecNode) {
+    public void setArraySpecNode(ParseNode arraySpecNode) {
         this.arraySpecNode = arraySpecNode;
     }
 
-    public void setPostunOp(PostunOp postunOp) {
+    public void setPostunOp(Operator postunOp) {
         this.postunOp = postunOp;
     }
 
-    public void setPrimaryExprNode(PrimaryExprNode primaryExprNode) {
+    public void setPrimaryExprNode(ParseNode primaryExprNode) {
         this.primaryExprNode = primaryExprNode;
     }
 
@@ -37,63 +39,43 @@ public class PostfixExprNode extends ParseNode {
     public String toString() {
         StringBuilder str = new StringBuilder("");
         if (primaryExprNode != null) {
-            str.append(primaryExprNode.toString());
-        }
-        else if (postunOp != null && postfixExprNode != null) {
             str.append("(");
-            str.append(postfixExprNode.toString());
-            str.append(postunOp.toString());
+            str.append(primaryExprNode);
+
+            if (arraySpecNode != null) {
+                str.append(arraySpecNode);
+            }
+
+            if (postfixExprNode != null) {
+                str.append(postfixExprNode);
+            }
             str.append(")");
         }
-        else if (arraySpecNode != null && postfixExprNode != null) {
-            str.append(postfixExprNode.toString());
-            str.append(arraySpecNode.toString());
-        }
+
         return str.toString();
     }
 
-    public static PostfixExprNode parse(TokenReader tr) {
-        Token token = tr.peek();
-        PostfixExprNode postfixExprNode = new PostfixExprNode();
-        if (PostunOp.isOp(token)) {
-            postfixExprNode.setPostunOp(new PostunOp(tr.read()));
-            PostfixExprNode postfixExprNode1 = PostfixExprNode.parse(tr);
-            if (postfixExprNode1 != null) {
-                postfixExprNode.setPostfixExprNode(postfixExprNode1);
-                return postfixExprNode;
-            }
-            return null;
-        }
-        else if (token.getValue().equals("[")) {
-            ArraySpecNode arraySpecNode = ArraySpecNode.parse(tr);
-            if (arraySpecNode != null) {
-                postfixExprNode.setArraySpecNode(arraySpecNode);
-                PostfixExprNode postfixExprNode1 = PostfixExprNode.parse(tr);
-                if (postfixExprNode1 != null) {
-                    postfixExprNode.setPostfixExprNode(postfixExprNode1);
-                    return postfixExprNode;
+    public static ParseNode parse(TokenReader tr) {
+        ParseNode node = PrimaryExprNode.parse(tr);
+        if (node != null) {
+            while (PostunOp.isOp(tr.peek()) || tr.peek().getValue().equals("[")) {
+                if (PostunOp.isOp(tr.peek())) {
+                    Operator temp = new PostunOp(tr.read());
+                    temp.setLhs(node);
+                    temp.setRhs(PostfixExprNode.parse(tr));
+                    node = temp;
                 }
-                return null;
-            }
-
-        }
-        else if (IdentifierNode.isID(token) || NumberNode.isNum(token) || token.getValue().equals("(")) {
-            PrimaryExprNode primaryExprNode = PrimaryExprNode.parse(tr);
-            if (primaryExprNode != null) {
-                postfixExprNode.setPrimaryExprNode(primaryExprNode);
-                token = tr.peek();
-                if (PostunOp.isOp(token) || token.getValue().equals("[")) {
-                    PostfixExprNode postfixExprNode1 = PostfixExprNode.parse(tr);
-                    if (postfixExprNode1 != null) {
-                        postfixExprNode.setPostfixExprNode(postfixExprNode1);
-                        return postfixExprNode;
-                    }
-                    return null;
+                else {
+                    ParseNode temp = new PostfixExprNode();
+                    ((PostfixExprNode) temp).setPrimaryExprNode(node);
+                    ((PostfixExprNode) temp).setArraySpecNode(ArraySpecNode.parse(tr));
+                    ((PostfixExprNode) temp).setPostfixExprNode(PostfixExprNode.parse(tr));
+                    node = temp;
                 }
-                return postfixExprNode;
             }
-            return null;
+            return node;
         }
-        return postfixExprNode;
+        return null;
     }
+
 }

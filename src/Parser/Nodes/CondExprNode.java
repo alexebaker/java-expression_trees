@@ -4,9 +4,9 @@ import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
 public class CondExprNode extends ParseNode {
-    private LogOrExprNode logOrExprNode;
-    private ExprNode exprNode;
-    private CondExprNode condExprNode;
+    private ParseNode logOrExprNode;
+    private ParseNode exprNode;
+    private ParseNode condExprNode;
 
     public CondExprNode() {
         logOrExprNode = null;
@@ -14,20 +14,20 @@ public class CondExprNode extends ParseNode {
         condExprNode = null;
     }
 
-    public void setLogOrExprNode(LogOrExprNode logOrExprNode) {
+    public void setLogOrExprNode(ParseNode logOrExprNode) {
         this.logOrExprNode = logOrExprNode;
     }
 
-    public void setCondExprNode(CondExprNode condExprNode) {
+    public void setCondExprNode(ParseNode condExprNode) {
         this.condExprNode = condExprNode;
     }
 
-    public void setExprNode(ExprNode exprNode) {
+    public void setExprNode(ParseNode exprNode) {
         this.exprNode = exprNode;
     }
 
-    public static CondExprNode parse(TokenReader tr) {
-        LogOrExprNode logOrExprNode = LogOrExprNode.parse(tr);
+    public static ParseNode parse(TokenReader tr) {
+        ParseNode logOrExprNode = LogOrExprNode.parse(tr);
         if (logOrExprNode != null) {
             Token token;
             CondExprNode condExprNode = new CondExprNode();
@@ -35,13 +35,13 @@ public class CondExprNode extends ParseNode {
             token = tr.peek();
             if (token.getValue().equals("?")) {
                 tr.read();
-                ExprNode exprNode = ExprNode.parse(tr);
+                ParseNode exprNode = ExprNode.parse(tr);
                 if (exprNode != null) {
                     condExprNode.setExprNode(exprNode);
                     token = tr.peek();
                     if (token.getValue().equals(":")) {
                         tr.read();
-                        CondExprNode condExprNode1 = CondExprNode.parse(tr);
+                        ParseNode condExprNode1 = CondExprNode.parse(tr);
                         if (condExprNode1 != null) {
                             condExprNode.setCondExprNode(condExprNode1);
                             return condExprNode;
@@ -59,12 +59,17 @@ public class CondExprNode extends ParseNode {
     public String toString() {
         StringBuilder str = new StringBuilder("");
         if (logOrExprNode != null) {
-            str.append(logOrExprNode.toString());
             if (exprNode != null && condExprNode != null) {
+                str.append("(");
+                str.append(logOrExprNode.toString());
                 str.append("?");
                 str.append(exprNode.toString());
                 str.append(":");
                 str.append(condExprNode.toString());
+                str.append(")");
+            }
+            else {
+                str.append(logOrExprNode);
             }
         }
         return str.toString();

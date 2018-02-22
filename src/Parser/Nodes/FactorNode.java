@@ -1,6 +1,7 @@
 package Parser.Nodes;
 
 import Parser.Operators.FactorOp;
+import Parser.Operators.Operator;
 import Parser.Operators.PreunOp;
 import Tokenizer.Token;
 import Tokenizer.TokenReader;
@@ -43,23 +44,20 @@ public class FactorNode extends ParseNode {
         return str.toString();
     }
 
-    public static FactorNode parse(TokenReader tr) {
-        Token token = tr.peek();
-        FactorNode factorNode = new FactorNode();
-        if (PreunOp.isOp(token)) {
-            factorNode.setPreunOp(new PreunOp(tr.read()));
-            FactorNode factorNode1 = FactorNode.parse(tr);
-            if (factorNode1 != null) {
-                factorNode.setFactorNode(factorNode1);
-                return factorNode;
+    public static ParseNode parse(TokenReader tr) {
+        if (PreunOp.isOp(tr.peek())) {
+            Operator op = new PreunOp(tr.read());
+            ParseNode node = FactorNode.parse(tr);
+            if (node != null) {
+                op.setRhs(node);
+                return op;
             }
             return null;
         }
 
-        PostfixExprNode postfixExprNode = PostfixExprNode.parse(tr);
+        ParseNode postfixExprNode = PostfixExprNode.parse(tr);
         if (postfixExprNode != null) {
-            factorNode.setPostfixExprNode(postfixExprNode);
-            return factorNode;
+            return postfixExprNode;
         }
         return null;
     }

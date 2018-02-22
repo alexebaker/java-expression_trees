@@ -1,5 +1,6 @@
 package Parser.Nodes;
 
+import Parser.Operators.Operator;
 import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
@@ -20,23 +21,21 @@ public class LogOrExprNode extends ParseNode {
         this.logOrExprNode = logOrExprNode;
     }
 
-    public static LogOrExprNode parse(TokenReader tr) {
-        LogAndExprNode logAndExprNode = LogAndExprNode.parse(tr);
-        if (logAndExprNode != null) {
-            Token token;
-            LogOrExprNode logOrExprNode = new LogOrExprNode();
-            logOrExprNode.setLogAndExprNode(logAndExprNode);
-            token = tr.peek();
-            if (token.getValue().equals("||")) {
-                tr.read();
-                LogOrExprNode logOrExprNode1 = LogOrExprNode.parse(tr);
-                if (logOrExprNode1 != null) {
-                    logOrExprNode.setLogOrExprNode(logOrExprNode1);
-                    return logOrExprNode;
+    public static ParseNode parse(TokenReader tr) {
+        ParseNode node = LogAndExprNode.parse(tr);
+        if (node != null) {
+            while (tr.peek().getValue().equals("||")) {
+                Operator temp = new Operator(tr.read());
+                temp.setLhs(node);
+                ParseNode node1 = LogAndExprNode.parse(tr);
+                if (node1 != null) {
+                    temp.setRhs(node1);
+                    node = temp;
+                    continue;
                 }
                 return null;
             }
-            return logOrExprNode;
+            return node;
         }
         return null;
     }

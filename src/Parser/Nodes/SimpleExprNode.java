@@ -1,5 +1,6 @@
 package Parser.Nodes;
 
+import Parser.Operators.Operator;
 import Parser.Operators.TermOp;
 import Tokenizer.Token;
 import Tokenizer.TokenReader;
@@ -45,23 +46,21 @@ public class SimpleExprNode extends ParseNode {
         return str.toString();
     }
 
-    public static SimpleExprNode parse(TokenReader tr) {
-        TermNode termNode = TermNode.parse(tr);
-        if (termNode != null) {
-            Token token;
-            SimpleExprNode simpleExprNode = new SimpleExprNode();
-            simpleExprNode.setTermNode(termNode);
-            token = tr.peek();
-            if (TermOp.isOp(token)) {
-                simpleExprNode.setTermOp(new TermOp(tr.read()));
-                SimpleExprNode simpleExprNode1 = SimpleExprNode.parse(tr);
-                if (simpleExprNode1 != null) {
-                    simpleExprNode.setSimpleExprNode(simpleExprNode1);
-                    return simpleExprNode;
+    public static ParseNode parse(TokenReader tr) {
+        ParseNode node = TermNode.parse(tr);
+        if (node != null) {
+            while (TermOp.isOp(tr.peek())) {
+                Operator temp = new TermOp(tr.read());
+                temp.setLhs(node);
+                ParseNode node1 = TermNode.parse(tr);
+                if (node1 != null) {
+                    temp.setRhs(node1);
+                    node = temp;
+                    continue;
                 }
                 return null;
             }
-            return simpleExprNode;
+            return node;
         }
         return null;
     }

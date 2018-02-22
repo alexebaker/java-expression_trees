@@ -6,7 +6,7 @@ import Tokenizer.TokenReader;
 public class PrimaryExprNode extends ParseNode {
     private IdentifierNode identifierNode;
     private NumberNode numberNode;
-    private ExprNode exprNode;
+    private ParseNode exprNode;
 
     public PrimaryExprNode() {
         this.identifierNode = null;
@@ -14,7 +14,7 @@ public class PrimaryExprNode extends ParseNode {
         this.exprNode = null;
     }
 
-    public void setExprNode(ExprNode exprNode) {
+    public void setExprNode(ParseNode exprNode) {
         this.exprNode = exprNode;
     }
 
@@ -36,14 +36,14 @@ public class PrimaryExprNode extends ParseNode {
             str.append(numberNode.toString());
         }
         else if (exprNode != null) {
-            str.append("(");
+            //str.append("(");
             str.append(exprNode.toString());
-            str.append(")");
+            //str.append(")");
         }
         return str.toString();
     }
 
-    public static PrimaryExprNode parse(TokenReader tr) {
+    public static ParseNode parse(TokenReader tr) {
         Token token = tr.peek();
         PrimaryExprNode primaryExprNode = new PrimaryExprNode();
         if (IdentifierNode.isID(token)) {
@@ -56,7 +56,7 @@ public class PrimaryExprNode extends ParseNode {
         }
         else if (token.getValue().equals("(")) {
             tr.read();
-            ExprNode exprNode = ExprNode.parse(tr);
+            ParseNode exprNode = ExprNode.parse(tr);
             if (exprNode != null && tr.peek().getValue().equals(")")) {
                 tr.read();
                 primaryExprNode.setExprNode(exprNode);

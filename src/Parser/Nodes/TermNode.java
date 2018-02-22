@@ -1,7 +1,7 @@
 package Parser.Nodes;
 
 import Parser.Operators.FactorOp;
-import Tokenizer.Token;
+import Parser.Operators.Operator;
 import Tokenizer.TokenReader;
 
 public class TermNode extends ParseNode {
@@ -45,23 +45,21 @@ public class TermNode extends ParseNode {
         return str.toString();
     }
 
-    public static TermNode parse(TokenReader tr) {
-        FactorNode factorNode = FactorNode.parse(tr);
-        if (factorNode != null) {
-            Token token;
-            TermNode termNode = new TermNode();
-            termNode.setFactorNode(factorNode);
-            token = tr.peek();
-            if (FactorOp.isOp(token)) {
-                termNode.setFactorOp(new FactorOp(tr.read()));
-                TermNode termNode1 = TermNode.parse(tr);
-                if (termNode1 != null) {
-                    termNode.setTermNode(termNode1);
-                    return termNode;
+    public static ParseNode parse(TokenReader tr) {
+        ParseNode node = FactorNode.parse(tr);
+        if (node != null) {
+            while (FactorOp.isOp(tr.peek())) {
+                Operator temp = new FactorOp(tr.read());
+                temp.setLhs(node);
+                ParseNode node1 = FactorNode.parse(tr);
+                if (node1 != null) {
+                    temp.setRhs(node1);
+                    node = temp;
+                    continue;
                 }
                 return null;
             }
-            return termNode;
+            return node;
         }
         return null;
     }

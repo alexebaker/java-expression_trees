@@ -8,17 +8,17 @@ import Compiler.CompilerIO;
 import java.util.Vector;
 
 public class ProgramNode extends ParseNode {
-    private Vector<ExprNode> exprs;
+    private Vector<ParseNode> exprs;
 
     public ProgramNode() {
         this.exprs = new Vector<>();
     }
 
-    public void addExpr(ExprNode expr) {
+    public void addExpr(ParseNode expr) {
         exprs.add(expr);
     }
 
-    public Vector<ExprNode> getExprs() {
+    public Vector<ParseNode> getExprs() {
         return exprs;
     }
 
@@ -27,23 +27,20 @@ public class ProgramNode extends ParseNode {
      *
      * @return true if the parse was successful, false otherwise
      */
-    public static ProgramNode parse(TokenReader tr, CompilerIO io) {
+    public static ParseNode parse(TokenReader tr, CompilerIO io) {
         //System.out.println("Parsing Program...");
-        Token token = tr.peek();
         ProgramNode pNode = new ProgramNode();
 
         while (true) {
-            if (EOFToken.isToken(token)) {
+            if (EOFToken.isToken(tr.peek())) {
                 // End of the input stream. If we got this far without an error, then the parse was good
                 break;
             }
 
-            ExprNode exprNode = ExprNode.parse(tr);
+            ParseNode exprNode = ExprNode.parse(tr);
             if (exprNode != null) {
                 //System.out.println("Good Expr...");
-                token = tr.peek();
-                //System.out.println(token);
-                if (token.getValue().equals(";")) {
+                if (tr.peek().getValue().equals(";")) {
                     tr.read();
                     pNode.addExpr(exprNode);
                     io.write(exprNode.toString());
@@ -59,7 +56,7 @@ public class ProgramNode extends ParseNode {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder("");
-        for (ExprNode expr : getExprs()) {
+        for (ParseNode expr : getExprs()) {
             str.append(expr.toString());
             str.append("\n");
         }

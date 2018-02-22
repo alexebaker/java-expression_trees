@@ -4,25 +4,25 @@ import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
 public class AsgnExprNode extends ParseNode {
-    private AsgnExprNode asgnExprNode;
-    private CondExprNode condExprNode;
+    private ParseNode asgnExprNode;
+    private ParseNode condExprNode;
 
     public AsgnExprNode() {
         this.asgnExprNode = null;
         this.condExprNode = null;
     }
 
-    public void setAsgnExprNode(AsgnExprNode asgnExprNode) {
+    public void setAsgnExprNode(ParseNode asgnExprNode) {
         this.asgnExprNode = asgnExprNode;
     }
 
-    public void setCondExprNode(CondExprNode condExprNode) {
+    public void setCondExprNode(ParseNode condExprNode) {
         this.condExprNode = condExprNode;
     }
 
-    public static AsgnExprNode parse(TokenReader tr) {
+    public static ParseNode parse(TokenReader tr) {
         //System.out.println("Parsing Assign Expression...");
-        CondExprNode condExprNode = CondExprNode.parse(tr);
+        ParseNode condExprNode = CondExprNode.parse(tr);
         if (condExprNode != null) {
             Token token;
             AsgnExprNode asgnExprNode = new AsgnExprNode();
@@ -30,7 +30,7 @@ public class AsgnExprNode extends ParseNode {
             token = tr.peek();
             if (token.getValue().equals("=")) {
                 tr.read();
-                AsgnExprNode asgnExprNode1 = AsgnExprNode.parse(tr);
+                ParseNode asgnExprNode1 = AsgnExprNode.parse(tr);
                 if (asgnExprNode1 != null) {
                     asgnExprNode.setAsgnExprNode(asgnExprNode1);
                 }
@@ -44,10 +44,15 @@ public class AsgnExprNode extends ParseNode {
     public String toString() {
         StringBuilder str = new StringBuilder("");
         if (condExprNode != null) {
-            str.append(condExprNode.toString());
             if (asgnExprNode != null) {
+                str.append("(");
+                str.append(condExprNode.toString());
                 str.append("=");
                 str.append(asgnExprNode.toString());
+                str.append(")");
+            }
+            else {
+                str.append(condExprNode);
             }
         }
         return str.toString();
