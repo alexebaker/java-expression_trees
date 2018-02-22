@@ -1,5 +1,6 @@
 package Parser.Nodes;
 
+import Parser.TokenParser;
 import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
@@ -62,7 +63,11 @@ public class PrimaryExprNode extends ParseNode {
                 primaryExprNode.setExprNode(exprNode);
                 return primaryExprNode;
             }
+            else {
+                System.err.println(TokenParser.getErrorMsg(tr.peek(), ")"));
+            }
         }
+        System.err.println(TokenParser.getErrorMsg(tr.peek(), "IDENTIFIER, NUMBER, or ("));
         return null;
     }
 }

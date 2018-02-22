@@ -2,6 +2,7 @@ package Parser.Nodes;
 
 import Parser.Operators.EqOp;
 import Parser.Operators.Operator;
+import Parser.TokenParser;
 import Tokenizer.Token;
 import Tokenizer.TokenReader;
 

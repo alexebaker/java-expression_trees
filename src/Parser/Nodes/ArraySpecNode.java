@@ -1,5 +1,6 @@
 package Parser.Nodes;
 
+import Parser.TokenParser;
 import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
@@ -38,7 +39,13 @@ public class ArraySpecNode extends ParseNode {
                     tr.read();
                     return arraySpecNode;
                 }
+                else {
+                    System.err.println(TokenParser.getErrorMsg(tr.peek(), "]"));
+                }
             }
+        }
+        else {
+            System.err.println(TokenParser.getErrorMsg(tr.peek(), "["));
         }
         return null;
     }

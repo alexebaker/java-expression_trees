@@ -1,5 +1,7 @@
 package Compiler;
 
+import Parser.Nodes.ParseNode;
+import Parser.Nodes.ProgramNode;
 import Parser.TokenParser;
 import Tokenizer.TokenReader;
 
@@ -10,8 +12,9 @@ public class LCC {
         this.cs = cs;
     }
 
-    public void compile() {
+    public int compile() {
         TokenParser tp = new TokenParser(new TokenReader(cs), cs);
-        tp.parse();
+        ProgramNode node = (ProgramNode) tp.parse();
+        return node.getNumErrors();
     }
 }

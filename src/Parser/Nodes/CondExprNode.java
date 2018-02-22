@@ -1,5 +1,6 @@
 package Parser.Nodes;
 
+import Parser.TokenParser;
 import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
@@ -46,6 +47,9 @@ public class CondExprNode extends ParseNode {
                             condExprNode.setCondExprNode(condExprNode1);
                             return condExprNode;
                         }
+                    }
+                    else {
+                        System.err.println(TokenParser.getErrorMsg(tr.peek(), ":"));
                     }
                 }
                 return null;
