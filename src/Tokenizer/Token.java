@@ -55,10 +55,6 @@ public class Token {
 
     @Override
     public String toString() {
-        String str = location + ":" + lineCount + ":" + charCount + ":" + token;
-        if (this.value.length() > 0) {
-            str += ":" + this.value;
-        }
-        return str;
+        return getValue();
     }
 }

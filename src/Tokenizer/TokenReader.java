@@ -4,6 +4,7 @@ import java.nio.BufferOverflowException;
 import java.nio.CharBuffer;
 
 import Compiler.CompilerState;
+import Compiler.CompilerIO;
 
 public class TokenReader {
     private CompilerState cs;
@@ -19,15 +20,17 @@ public class TokenReader {
 
     public Token read() {
         if (hasBufferedToken) {
-            hasBufferedToken = false;
+            hasBufferedToken = !hasBufferedToken;
             return bufferedToken;
         }
         return getNextToken();
     }
 
     public Token peek() {
-        bufferedToken = getNextToken();
-        hasBufferedToken = true;
+        if (!hasBufferedToken) {
+            bufferedToken = getNextToken();
+            hasBufferedToken = !hasBufferedToken;
+        }
         return bufferedToken;
     }
 
@@ -37,7 +40,6 @@ public class TokenReader {
      */
     private Token getNextToken() {
         int ch;
-        boolean inComment = false;
         CharBuffer charBuffer = CharBuffer.allocate(bufferCapacity);
 
         while (true) {
@@ -47,11 +49,7 @@ public class TokenReader {
             if (EOFToken.isToken(ch)) {
                 return new EOFToken(cs);
             }
-            else if (ch == '\n') {
-                inComment = false;
-                continue;
-            }
-            else if (Character.isWhitespace(ch) || inComment) {
+            else if (Character.isWhitespace(ch)) {
                 continue;
             }
 
@@ -72,8 +70,6 @@ public class TokenReader {
             // Determine if the token in valid. The inside if statements determines
             // if the token needs to be written to the output stream
             if (isComment(buf)) {
-                inComment = true;
-                charBuffer = CharBuffer.allocate(bufferCapacity);
             }
             else if (LiteralToken.isToken(buf)) {
                 // The last check for a number token handles the case when a '.' is a literal token and not part of a number
@@ -100,6 +96,28 @@ public class TokenReader {
             }
             else {
                 return new IllChrToken(buf, cs);
+            }
+        }
+    }
+
+    public void handleError() {
+        while (true) {
+            if (EOFToken.isToken(peek())) {
+                return;
+            }
+            else if (read().getValue().equals(";")) {
+                return;
+            }
+        }
+    }
+
+    private void handleComment(CompilerIO io) {
+        while (true) {
+            if (io.peek() == -1) {
+                return;
+            }
+            else if (io.read() == '\n') {
+                return;
             }
         }
     }

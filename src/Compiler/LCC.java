@@ -1,6 +1,7 @@
 package Compiler;
 
-import Parser.ParseTree;
+import Parser.Nodes.ParseNode;
+import Parser.Nodes.ProgramNode;
 import Parser.TokenParser;
 import Tokenizer.TokenReader;
 
@@ -12,8 +13,7 @@ public class LCC {
     }
 
     public void compile() {
-        TokenParser tp = new TokenParser(new TokenReader(cs));
-        ParseTree parseTree =  tp.getParseTree();
-        this.cs.getIO().write(parseTree.toString());
+        TokenParser tp = new TokenParser(new TokenReader(cs), cs);
+        tp.parse();
     }
 }
