@@ -1,21 +1,25 @@
 all: jar
 
-jar: src/*.java
-	@cp README.md src/README.txt && cd src && javac *.java && jar cvfe ../spike2.jar Main *.java *.class README.txt && rm *.class README.txt && cd ..
+jar: sources
+	@cp README.md src/README.txt && javac @sources.txt && cd src/ && jar cvfe ../spike2.jar Main . && cd ..
+
+sources: FORCE
+	@find src/ -name "*.java" > sources.txt
 
 clean: FORCE
-	rm src/*.class src/README.txt
+	@find src/ -name "*.class" -delete
+	@rm src/README.txt
 
 TEST_FILES:=$(wildcard tests/*.expi)
 TEST_RESULTS:=$(patsubst tests/%.expi, tests/%.expo,$(TEST_FILES))
 
 test: jar $(TEST_RESULTS)
 
-tests/%.lexo: tests/%.expi FORCE
+tests/%.expo: tests/%.expi FORCE
 	@echo -n "[Test $< -> $@ file: "
-	@java -jar spike1.jar $< | diff $@ -
+	@java -jar spike2.jar $< | diff $@ -
 	@echo -n "OK, stdin: "
-	@cat $< | java -jar spike1.jar | diff $@ -
+	@cat $< | java -jar spike2.jar | diff $@ -
 	@echo "OK]"
 
 .PHONY: FORCE
