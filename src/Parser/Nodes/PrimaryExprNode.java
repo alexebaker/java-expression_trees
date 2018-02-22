@@ -67,7 +67,7 @@ public class PrimaryExprNode extends ParseNode {
                 System.err.println(TokenParser.getErrorMsg(tr.peek(), ")"));
             }
         }
-        System.err.println(TokenParser.getErrorMsg(tr.peek(), "IDENTIFIER, NUMBER, or ("));
+        //System.err.println(TokenParser.getErrorMsg(tr.peek(), "IDENTIFIER, NUMBER, or ("));
         return null;
     }
 }
