@@ -2,9 +2,7 @@ package Parser.Nodes;
 
 import Parser.Operators.Operator;
 import Parser.Operators.PostunOp;
-import Tokenizer.Token;
 import Tokenizer.TokenReader;
-import javafx.geometry.Pos;
 
 public class PostfixExprNode extends ParseNode {
     private ParseNode primaryExprNode;
