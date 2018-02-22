@@ -1,6 +1,5 @@
 package Compiler;
 
-import Parser.Nodes.ParseNode;
 import Parser.Nodes.ProgramNode;
 import Parser.TokenParser;
 import Tokenizer.TokenReader;
