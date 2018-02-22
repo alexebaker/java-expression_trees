@@ -24,6 +24,12 @@ Run the project:
 java -jar spike2.jar tests/t11.expi
 ```
 
+Run the test cases:
+
+```bash
+make test 2>/dev/null
+```
+
 
 ## Specification Issues
 
@@ -46,7 +52,7 @@ The Following rule:
 Was changed to:
 
     ASGN_EXPR      <- COND_EXPR "=" ASGN_EXPR | COND_EXPR
-    
+
 Currently, the code does not check and verify the the `COND_EXPR`
 before the `=` is a `POSTFIX_EXPR`. This could lead to invalid `ASGN_EXPR`
 such as `a ? b : c = 6;`.
