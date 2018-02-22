@@ -8,7 +8,7 @@ sources: FORCE
 
 clean: FORCE
 	@find src/ -name "*.class" -delete
-	@rm src/README.txt
+	@rm src/README.txt sources.txt
 
 TEST_FILES:=$(wildcard tests/*.expi)
 TEST_RESULTS:=$(patsubst tests/%.expi, tests/%.expo,$(TEST_FILES))
