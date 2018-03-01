@@ -18,7 +18,5 @@ public class TokenParser {
         return ProgramNode.parse(tr, cs.getIO());
     }
 
-    public static String getErrorMsg(Token token, String expected) {
-        return "Parse Error! Line: " + token.getLineCount() + " Character: " + token.getLineCount() + " Reason: Found '" + token + "' but expected '" + expected + "'";
-    }
+
 }

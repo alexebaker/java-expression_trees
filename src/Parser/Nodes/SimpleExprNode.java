@@ -2,7 +2,6 @@ package Parser.Nodes;
 
 import Parser.Operators.Operator;
 import Parser.Operators.TermOp;
-import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
 public class SimpleExprNode extends ParseNode {

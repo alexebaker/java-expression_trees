@@ -1,7 +1,7 @@
 package Parser.Nodes;
 
-import Tokenizer.NumberToken;
-import Tokenizer.Token;
+import Tokenizer.Tokens.NumberToken;
+import Tokenizer.Tokens.Token;
 
 public class NumberNode extends ParseNode {
     private String num;

@@ -1,10 +1,10 @@
-package Tokenizer;
+package Tokenizer.Tokens;
 
-import Compiler.CompilerState;
+import Tokenizer.Location;
 
 public class IllChrToken extends Token {
-    IllChrToken(String value, CompilerState cs) {
-        super("$illchr", value, cs);
+    public IllChrToken(String value, Location loc) {
+        super("$illchr", value, loc);
     }
 
     /**

@@ -1,7 +1,6 @@
 package Parser.Nodes;
 
 import Parser.Operators.Operator;
-import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
 public class LogAndExprNode extends ParseNode {

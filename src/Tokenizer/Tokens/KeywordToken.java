@@ -1,10 +1,10 @@
-package Tokenizer;
+package Tokenizer.Tokens;
 
-import Compiler.CompilerState;
+import Tokenizer.Location;
 
 public class KeywordToken extends Token {
-    KeywordToken(String token, CompilerState cs) {
-        super(token, cs);
+    public KeywordToken(String token, Location loc) {
+        super(token, loc);
     }
 
     /**

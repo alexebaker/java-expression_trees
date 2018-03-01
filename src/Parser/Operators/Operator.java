@@ -1,23 +1,14 @@
 package Parser.Operators;
 
 import Parser.Nodes.ParseNode;
-import Tokenizer.Token;
+import Tokenizer.Tokens.Token;
 
 public class Operator extends ParseNode {
-    private String op;
+    private Token op;
     private ParseNode lhs;
     private ParseNode rhs;
 
-
-    public Operator() {
-        this("");
-    }
-
-    public Operator(Token token) {
-        this(token.getValue());
-    }
-
-    public Operator(String op) {
+    public Operator(Token op) {
         this.op = op;
         this.lhs = null;
         this.rhs = null;

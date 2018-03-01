@@ -1,10 +1,10 @@
-package Tokenizer;
+package Tokenizer.Tokens;
 
-import Compiler.CompilerState;
+import Tokenizer.Location;
 
 public class NumberToken extends Token {
-    NumberToken(String value, CompilerState cs) {
-        super("$num", value, cs);
+    public NumberToken(String value, Location loc) {
+        super("$num", value, loc);
     }
 
     /**

@@ -1,7 +1,6 @@
 package Parser.Nodes;
 
-import Parser.TokenParser;
-import Tokenizer.Token;
+import Tokenizer.Tokens.Token;
 import Tokenizer.TokenReader;
 
 public class AsgnExprNode extends ParseNode {

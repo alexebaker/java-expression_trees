@@ -1,7 +1,7 @@
 package Parser.Nodes;
 
 import Parser.TokenParser;
-import Tokenizer.EOFToken;
+import Tokenizer.Tokens.EOFToken;
 import Tokenizer.TokenReader;
 import Compiler.CompilerIO;
 
@@ -60,7 +60,7 @@ public class ProgramNode extends ParseNode {
                 // Only here to print out a partial expression to match the test cases
                 io.write(exprNode.toString());
             }
-            tr.handleError();
+            tr.skipExpr();
             numErrors += 1;
         }
         pNode.setNumErrors(numErrors);

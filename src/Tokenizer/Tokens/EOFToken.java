@@ -1,10 +1,10 @@
-package Tokenizer;
+package Tokenizer.Tokens;
 
-import Compiler.CompilerState;
+import Tokenizer.Location;
 
 public class EOFToken extends Token {
-    public EOFToken(CompilerState cs) {
-        super("$EOF", cs);
+    public EOFToken(Location loc) {
+        super("$EOF", loc);
     }
 
     @Override

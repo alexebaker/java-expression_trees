@@ -1,10 +1,10 @@
-package Tokenizer;
+package Tokenizer.Tokens;
 
-import Compiler.CompilerState;
+import Tokenizer.Location;
 
 public class LiteralToken extends Token {
-    LiteralToken(String token, CompilerState cs) {
-        super(token, cs);
+    public LiteralToken(String token, Location loc) {
+        super(token, loc);
     }
 
     /**

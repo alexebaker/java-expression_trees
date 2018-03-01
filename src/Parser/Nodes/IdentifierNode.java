@@ -1,7 +1,7 @@
 package Parser.Nodes;
 
-import Tokenizer.IdentifierToken;
-import Tokenizer.Token;
+import Tokenizer.Tokens.IdentifierToken;
+import Tokenizer.Tokens.Token;
 
 public class IdentifierNode extends ParseNode {
     private String id;

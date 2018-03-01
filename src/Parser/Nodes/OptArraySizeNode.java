@@ -1,6 +1,6 @@
 package Parser.Nodes;
 
-import Tokenizer.Token;
+import Tokenizer.Tokens.Token;
 import Tokenizer.TokenReader;
 
 public class OptArraySizeNode extends ParseNode {

@@ -1,10 +1,10 @@
-package Tokenizer;
+package Tokenizer.Tokens;
 
-import Compiler.CompilerState;
+import Tokenizer.Location;
 
 public class IdentifierToken extends Token {
-    IdentifierToken(String value, CompilerState cs) {
-        super("$id", value, cs);
+    public IdentifierToken(String value, Location loc) {
+        super("$id", value, loc);
     }
 
     /**

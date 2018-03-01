@@ -1,9 +1,7 @@
 package Parser.Nodes;
 
-import Parser.Operators.FactorOp;
 import Parser.Operators.Operator;
 import Parser.Operators.PreunOp;
-import Tokenizer.Token;
 import Tokenizer.TokenReader;
 
 public class FactorNode extends ParseNode {
